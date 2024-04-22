@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from kaggle.api.kaggle_api_extended import KaggleApi
+import os
+import zipfile
 
 def remove_time(data):
     # Ensure that time is removed and only the date is kept
@@ -85,20 +88,50 @@ def plot_interception_rate(data):
     )
     return fig
 
+def download_dataset():
+    # Initialize Kaggle API client and authenticate using secrets
+    api = KaggleApi()
+    api.set_config_value('username', st.secrets["kaggle"]["username"])
+    api.set_config_value('key', st.secrets["kaggle"]["key"])
+    api.authenticate()
+    
+    # Define the dataset and the path where files will be downloaded
+    dataset = 'piterfm/massive-missile-attacks-on-ukraine'
+    path = '.'
+
+    # Download the dataset zip file
+    api.dataset_download_files(dataset, path=path, unzip=False)
+
+    # Define the path of the zip file
+    zip_path = os.path.join(path, dataset.split('/')[-1] + '.zip')
+
+    # Extract only the needed file
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        # Get list of all files in zip
+        file_names = zip_ref.namelist()
+        # Find the required file and extract it
+        for file in file_names:
+            if file.endswith('missile_attacks_daily.csv'):
+                zip_ref.extract(file, path)
+                # Optionally, rename and move the file to a more convenient location
+                os.rename(os.path.join(path, file), os.path.join(path, 'missile_attacks_daily.csv'))
+                break
+
+    # Clean up the zip file after extraction
+    os.remove(zip_path)
+
+    st.success('Data downloaded and extracted successfully!')
+
 # Streamlit app interface
 st.title('Ukraine dashboard')
 st.subheader('Missiles fired, intercepted, and interception rate')
 placeholder = st.empty()
-uploaded_file = st.sidebar.file_uploader("Upload CSV", type="csv")
-if uploaded_file is None:
-    # If not, display the instruction text
-    placeholder.markdown("Upload a CSV file extracted from Kaggle to visualize data.")
-else:
-    placeholder.empty()
 
-if uploaded_file is not None:
-    # Read the dataset
-    data = pd.read_csv(uploaded_file)
+if st.sidebar.button('Get Data'):
+    download_dataset()
+    st.success('Data downloaded successfully!')
+
+    data = pd.read_csv("missile_attacks_daily.csv")
 
     # Process the dataset
     data_processed = remove_time(data.copy())  # Remove time part first
