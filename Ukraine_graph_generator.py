@@ -107,25 +107,7 @@ def download_dataset():
     path = '.'
 
     # Download the dataset zip file
-    api.dataset_download_files(dataset, path=path, unzip=False)
-
-    # Define the path of the zip file
-    zip_path = os.path.join(path, dataset.split('/')[-1] + '.zip')
-
-    # Extract only the needed file
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        # Get list of all files in zip
-        file_names = zip_ref.namelist()
-        # Find the required file and extract it
-        for file in file_names:
-            if file.endswith('missile_attacks_daily.csv'):
-                zip_ref.extract(file, path)
-                # Optionally, rename and move the file to a more convenient location
-                os.rename(os.path.join(path, file), os.path.join(path, 'missile_attacks_daily.csv'))
-                break
-
-    # Clean up the zip file after extraction
-    os.remove(zip_path)
+    api.dataset_download_files(dataset, path=path, unzip=True)
 
 # Streamlit app interface
 st.title('Ukraine dashboard')
@@ -143,22 +125,15 @@ if st.sidebar.button('Get Data', type="primary"):
 if not st.session_state['data_loaded']:
     st.markdown("To begin, click the 'GET DATA' button on the left panel")
 if st.session_state['data_loaded']:
-    # This button will allow users to download 'missile_attacks_daily.csv' once it's available
     success = st.success('Data downloaded and extracted successfully!')
-    time.sleep(3) # Wait for 3 seconds
+    time.sleep(3) # Wait for 2 seconds
     success.empty() # Clear the alert
 
     st.markdown(
         "_The database is hosted on Kaggle and updated often. You can find more details [here](https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine)._",
         unsafe_allow_html=True
     )    
-    with open("missile_attacks_daily.csv", "rb") as file:
-        btn = st.sidebar.download_button(
-            label="Export Data",
-            data=file,
-            file_name="missile_attacks_daily.csv",
-            mime="text/csv"
-            )
+    
     data = pd.read_csv("missile_attacks_daily.csv")
 
     # Process the dataset
