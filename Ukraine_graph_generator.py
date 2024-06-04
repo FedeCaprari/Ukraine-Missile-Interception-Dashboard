@@ -7,8 +7,8 @@ import time
 from kaggle.api.kaggle_api_extended import KaggleApi
 
 # Set up environment variables for Kaggle credentials
-kaggle_username = st.secrets["kaggle"]["username"]
-kaggle_key = st.secrets["kaggle"]["key"]
+os.environ['KAGGLE_USERNAME'] = st.secrets["kaggle"]["username"]
+os.environ['KAGGLE_KEY'] = st.secrets["kaggle"]["key"]
 
 st.set_page_config(page_title= "Ukraine Missiles Launched vs Intercepted Dashboard", page_icon=":bar_chart:")
 
