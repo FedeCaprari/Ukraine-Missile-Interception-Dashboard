@@ -15,6 +15,8 @@ st.set_page_config(page_title= "Ukraine Missiles Launched vs Intercepted Dashboa
 def download_dataset():
     # Initialize Kaggle API client and authenticate
     api = KaggleApi()
+    api.config_values['username'] = os.environ['KAGGLE_USERNAME']
+    api.config_values['key'] = os.environ['KAGGLE_KEY']
     api.authenticate()
     
    # Define the dataset and the path where files will be downloaded
