@@ -1,0 +1,4 @@
+{
+  "username": "your_kaggle_username",
+  "key": "your_kaggle_api_key"
+}
