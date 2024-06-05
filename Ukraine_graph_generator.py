@@ -5,7 +5,6 @@ import os
 import json
 import zipfile
 import time
-from kaggle.api.kaggle_api_extended import KaggleApi
 
 # Set up environment variables for Kaggle credentials
 os.environ['KAGGLE_USERNAME'] = st.secrets["kaggle"]["username"]
@@ -14,19 +13,8 @@ os.environ['KAGGLE_KEY'] = st.secrets["kaggle"]["key"]
 st.set_page_config(page_title= "Ukraine Missiles Launched vs Intercepted Dashboard", page_icon=":bar_chart:")
 
 def download_dataset():
-    kaggle_config_dir = os.path.join(os.path.expanduser("~"), '.kaggle')
-    os.makedirs(kaggle_config_dir, exist_ok=True)
-
-    # Create kaggle.json file with credentials
-    credentials = {
-        "username": os.environ['KAGGLE_USERNAME'],
-        "key": os.environ['KAGGLE_KEY']
-    }
-    with open(os.path.join(kaggle_config_dir, 'kaggle.json'), 'w') as file:
-        json.dump(credentials, file)
-    os.chmod(os.path.join(kaggle_config_dir, 'kaggle.json'), 0o600)
-
     # Initialize Kaggle API client and authenticate
+    from kaggle.api.kaggle_api_extended import KaggleApi
     api = KaggleApi()
     api.authenticate()
     
