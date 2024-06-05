@@ -7,18 +7,31 @@ import time
 from kaggle.api.kaggle_api_extended import KaggleApi
 
 # Set up environment variables for Kaggle credentials
-os.environ['KAGGLE_USERNAME'] = st.secrets["kaggle"]["username"]
-os.environ['KAGGLE_KEY'] = st.secrets["kaggle"]["key"]
+username = st.secrets["kaggle"]["username"]
+key = st.secrets["kaggle"]["key"]
+
+# Create a temporary Kaggle configuration file
+kaggle_config_dir = os.path.expanduser("~/.kaggle")
+kaggle_config_path = os.path.join(kaggle_config_dir, 'kaggle.json')
+
+if not os.path.exists(kaggle_config_dir):
+    os.makedirs(kaggle_config_dir)
+
+with open(kaggle_config_path, 'w') as f:
+    f.write(f'{{"username":"{username}","key":"{key}"}}')
+
+# Ensure correct permissions on the file
+os.chmod(kaggle_config_path, 0o600)
 
 st.set_page_config(page_title= "Ukraine Missiles Launched vs Intercepted Dashboard", page_icon=":bar_chart:")
 
 def download_dataset():
     # Initialize Kaggle API client and authenticate
-    api = KaggleApi()
-    api._load_config()
-    api.config_values['username'] = st.secrets["kaggle"]["username"]
-    api.config_values['key'] = st.secrets["kaggle"]["key"]
+    api = KaggleApi
+        
+    # Authenticate using the provided credentials
     api.authenticate()
+
    # Define the dataset and the path where files will be downloaded
     dataset = 'piterfm/massive-missile-attacks-on-ukraine'
     path = '.'
