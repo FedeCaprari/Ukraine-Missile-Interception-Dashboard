@@ -149,7 +149,7 @@ if not st.session_state['data_loaded']:
 if st.session_state['data_loaded']:
     # This button will allow users to download 'missile_attacks_daily.csv' once it's available
     success = st.success('Data downloaded and extracted successfully!')
-    time.sleep(3) # Wait for 3 seconds
+    time.sleep(1) # Wait for 1 second
     success.empty() # Clear the alert
 
     st.markdown(
