@@ -123,9 +123,7 @@ def plot_interception_rate(data):
         ),
         yaxis=dict(
             title_font=dict(size=20, color='black'),
-            tickfont=dict(size=18, color='black'),
-            range=[50, 100]
-        )
+            tickfont=dict(size=18, color='black'))
     )
     return fig
 
@@ -209,4 +207,5 @@ if st.session_state['data_loaded']:
         st.write("Missiles launched and intercepted:", filtered_data)
     with col2:
         st.write("Monthly Interception Rates:", filtered_monthly_data)
+
 
